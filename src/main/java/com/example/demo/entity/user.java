@@ -1,22 +1,28 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 @Entity
-@Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String username;
 
-    @Column(nullable = false)
-    private String name;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @Column(nullable = false)
-    private String password;
+    public String getUsername() {
+        return username;
+    }
 
-    @Column(nullable = false)
-    private String role; // USER / ADMIN
-
-    // getters & setters
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

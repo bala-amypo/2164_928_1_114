@@ -1,17 +1,28 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 @Entity
 public class Token {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String status;
 
-    @Column(unique = true)
-    private String tokenNumber;
+    public Long getId() {
+        return id;
+    }
 
-    private String status; // WAITING, SERVING, COMPLETED, CANCELLED
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @ManyToOne
-    private ServiceCounter serviceCounter;
+    public String getStatus() {
+        return status;
+    }
 
-    // getters & setters
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
