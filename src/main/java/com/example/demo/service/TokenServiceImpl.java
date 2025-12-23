@@ -30,7 +30,7 @@ public class TokenServiceImpl implements TokenService {
         ServiceCounter counter = counterRepository.findById(counterId)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
-        if (!counter.getIsActive()) {
+        if (!counter.getActive()) {
             throw new RuntimeException("not active");
         }
 

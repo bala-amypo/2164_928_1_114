@@ -23,6 +23,6 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public List<ServiceCounter> getActiveCounters() {
-        return repository.findByIsActiveTrue();
+        return repository.findByActiveTrue();
     }
 }
