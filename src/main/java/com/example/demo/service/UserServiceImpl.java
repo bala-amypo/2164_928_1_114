@@ -21,7 +21,19 @@ public class UserServiceImpl implements UserService {
         }
         return repository.save(user);
     }
+    @Override
+public User login(String email, String password) {
 
+    User user = repository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (!user.getPassword().equals(password)) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    return user;
+}
+ 
     @Override
     public User findByEmail(String email) {
         return repository.findByEmail(email).orElse(null);
