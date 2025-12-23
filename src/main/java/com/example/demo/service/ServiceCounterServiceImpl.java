@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
 import com.example.demo.entity.ServiceCounter;
 import com.example.demo.repository.ServiceCounterRepository;
