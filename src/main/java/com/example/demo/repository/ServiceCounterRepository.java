@@ -1,8 +1,12 @@
 package com.example.demo.repository;
 
-import com.example.demo.entity.*;
+import com.example.demo.entity.ServiceCounter;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.*;
-public interface ServiceCounterRepository extends JpaRepository<ServiceCounter, Long> {
-    List<ServiceCounter> findByIsActiveTrue();
+
+import java.util.List;
+
+public interface ServiceCounterRepository
+        extends JpaRepository<ServiceCounter, Long> {
+
+    List<ServiceCounter> findByActiveTrue();
 }
