@@ -1,10 +1,11 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-
 /*
  * User Entity
  */
+
+import jakarta.persistence.*;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -22,7 +23,6 @@ public class User {
 
     public User() {}
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

@@ -1,11 +1,12 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
 /*
  * Token Entity
  */
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
 @Entity
 public class Token {
 
@@ -29,16 +30,16 @@ public class Token {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTokenNumber() {
         return tokenNumber;
     }
 
     public void setTokenNumber(String tokenNumber) {
         this.tokenNumber = tokenNumber;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public ServiceCounter getServiceCounter() {

@@ -1,11 +1,12 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
 /*
  * Queue Position Entity
  */
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
 @Entity
 public class QueuePosition {
 
@@ -25,12 +26,12 @@ public class QueuePosition {
         return id;
     }
 
-    public Token getToken() {
-        return token;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Token getToken() {
+        return token;
     }
 
     public void setToken(Token token) {
