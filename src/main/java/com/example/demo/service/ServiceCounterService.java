@@ -1,20 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.ServiceCounter;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+public interface ServiceCounterService {
 
-import com.example.demo.entity.ServiceCounter;
-import com.example.demo.repository.ServiceCounterRepository;
+    ServiceCounter addCounter(ServiceCounter counter);
 
-@Service
-public class ServiceCounterService {
-
-    @Autowired
-    private ServiceCounterRepository serviceCounterRepository;
-
-    public List<ServiceCounter> getAllServiceCounters() {
-        return serviceCounterRepository.findAll();
-    }
+    List<ServiceCounter> getActiveCounters();
 }
