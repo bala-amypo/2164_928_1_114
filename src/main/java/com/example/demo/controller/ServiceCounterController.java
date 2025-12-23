@@ -1,30 +1,28 @@
 package com.example.demo.controller;
 
-/*
- * Service Counter Controller
- * Handles counter-related operations
- */
-
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import com.example.demo.entity.ServiceCounter;
 import com.example.demo.service.ServiceCounterService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/counter")
+@RequestMapping("/counters")
 public class ServiceCounterController {
 
-    private final ServiceCounterService counterService;
+    private final ServiceCounterService service;
 
-    public ServiceCounterController(ServiceCounterService counterService) {
-        this.counterService = counterService;
+    public ServiceCounterController(ServiceCounterService service) {
+        this.service = service;
     }
 
-    /*
-     * Get all active service counters
-     */
+    @PostMapping("/")
+    public ServiceCounter add(@RequestBody ServiceCounter counter) {
+        return service.addCounter(counter);
+    }
+
     @GetMapping("/active")
-    public List<ServiceCounter> getActiveCounters() {
-        return counterService.getActiveCounters();
+    public List<ServiceCounter> active() {
+        return service.getActiveCounters();
     }
 }

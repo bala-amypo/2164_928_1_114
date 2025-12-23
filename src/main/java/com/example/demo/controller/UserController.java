@@ -1,39 +1,30 @@
 package com.example.demo.controller;
 
-/*
- * User Controller
- * Handles user-related operations
- */
-
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/auth")
 public class UserController {
 
-    private final UserService userService;
+    private final UserService service;
 
-    // Constructor Injection
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserService service) {
+        this.service = service;
     }
 
-    /*
-     * Get all users
-     */
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return service.register(user);
     }
 
-    /*
-     * Get user by ID
-     */
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    @PostMapping("/login")
+    public User login(@RequestParam String email) {
+        User user = service.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("not found");
+        }
+        return user;
     }
 }

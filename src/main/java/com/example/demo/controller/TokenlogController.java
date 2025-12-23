@@ -1,31 +1,29 @@
 package com.example.demo.controller;
 
-/*
- * Token Log Controller
- * Handles token log related operations
- */
-
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import com.example.demo.entity.TokenLog;
 import com.example.demo.service.TokenLogService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/token-logs")
+@RequestMapping("/logs")
 public class TokenLogController {
 
-    private final TokenLogService tokenLogService;
+    private final TokenLogService service;
 
-    // Constructor Injection
-    public TokenLogController(TokenLogService tokenLogService) {
-        this.tokenLogService = tokenLogService;
+    public TokenLogController(TokenLogService service) {
+        this.service = service;
     }
 
-    /*
-     * Get all logs for a given token ID
-     */
-    @GetMapping("/token/{tokenId}")
-    public List<TokenLog> getLogsByTokenId(@PathVariable Long tokenId) {
-        return tokenLogService.getLogsByTokenId(tokenId);
+    @PostMapping("/{tokenId}")
+    public TokenLog add(@PathVariable Long tokenId,
+                        @RequestParam String message) {
+        return service.addLog(tokenId, message);
+    }
+
+    @GetMapping("/{tokenId}")
+    public List<TokenLog> getLogs(@PathVariable Long tokenId) {
+        return service.getLogs(tokenId);
     }
 }

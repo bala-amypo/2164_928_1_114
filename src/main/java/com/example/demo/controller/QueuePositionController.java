@@ -1,30 +1,27 @@
 package com.example.demo.controller;
 
-/*
- * QueuePosition Controller
- * Handles queue position related operations
- */
-
-import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.QueuePosition;
-import com.example.demo.service.QueueService;
+import com.example.demo.service.QueuePositionService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/queue")
 public class QueuePositionController {
 
-    private final QueueService queueService;
+    private final QueuePositionService service;
 
-    // Constructor Injection
-    public QueuePositionController(QueueService queueService) {
-        this.queueService = queueService;
+    public QueuePositionController(QueuePositionService service) {
+        this.service = service;
     }
 
-    /*
-     * Get queue position details using token ID
-     */
+    @PutMapping("/position/{tokenId}/{newPosition}")
+    public QueuePosition update(@PathVariable Long tokenId,
+                                @PathVariable Integer newPosition) {
+        return service.updateQueuePosition(tokenId, newPosition);
+    }
+
     @GetMapping("/position/{tokenId}")
-    public QueuePosition getQueuePosition(@PathVariable Long tokenId) {
-        return queueService.getQueuePosition(tokenId);
+    public QueuePosition get(@PathVariable Long tokenId) {
+        return service.getPosition(tokenId);
     }
 }
