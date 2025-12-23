@@ -1,20 +1,34 @@
 package com.example.demo.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.example.demo.entity.Token;
 import com.example.demo.entity.TokenLog;
 import com.example.demo.repository.TokenLogRepository;
+import com.example.demo.repository.TokenRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TokenLogService {
 
-    @Autowired
-    private TokenLogRepository tokenLogRepository;
+    private final TokenLogRepository logRepository;
+    private final TokenRepository tokenRepository;
 
-    public List<TokenLog> getAllTokenLogs() {
-        return tokenLogRepository.findAll();
+    public TokenLogService(TokenLogRepository logRepository,
+                           TokenRepository tokenRepository) {
+        this.logRepository = logRepository;
+        this.tokenRepository = tokenRepository;
+    }
+
+    public TokenLog addLog(Long tokenId, String message) {
+        Token token = tokenRepository.findById(tokenId)
+                .orElseThrow(() -> new RuntimeException("not found"));
+
+        TokenLog log = new TokenLog(token, message);
+        return logRepository.save(log);
+    }
+
+    public List<TokenLog> getLogs(Long tokenId) {
+        return logRepository.findByToken_IdOrderByLoggedAtAsc(tokenId);
     }
 }
