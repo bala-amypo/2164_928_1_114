@@ -1,9 +1,5 @@
 package com.example.demo.entity;
 
-/*
- * Token Entity
- */
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -26,51 +22,24 @@ public class Token {
 
     public Token() {}
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTokenNumber() {
-        return tokenNumber;
-    }
-
-    public void setTokenNumber(String tokenNumber) {
+    public Token(String tokenNumber, ServiceCounter serviceCounter, String status) {
         this.tokenNumber = tokenNumber;
-    }
-
-    public ServiceCounter getServiceCounter() {
-        return serviceCounter;
-    }
-
-    public void setServiceCounter(ServiceCounter serviceCounter) {
         this.serviceCounter = serviceCounter;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-    
-    public void setStatus(String status) {
         this.status = status;
+        this.issuedAt = LocalDateTime.now();
     }
 
-    public LocalDateTime getIssuedAt() {
-        return issuedAt;
-    }
-    
-    public void setIssuedAt(LocalDateTime issuedAt) {
-        this.issuedAt = issuedAt;
-    }
+    public Long getId() { return id; }
+    public String getTokenNumber() { return tokenNumber; }
+    public ServiceCounter getServiceCounter() { return serviceCounter; }
+    public String getStatus() { return status; }
+    public LocalDateTime getIssuedAt() { return issuedAt; }
+    public LocalDateTime getCompletedAt() { return completedAt; }
 
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
-    }
-    
-    public void setCompletedAt(LocalDateTime completedAt) {
-        this.completedAt = completedAt;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setTokenNumber(String tokenNumber) { this.tokenNumber = tokenNumber; }
+    public void setServiceCounter(ServiceCounter serviceCounter) { this.serviceCounter = serviceCounter; }
+    public void setStatus(String status) { this.status = status; }
+    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
+    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 }

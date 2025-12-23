@@ -1,9 +1,5 @@
 package com.example.demo.entity;
 
-/*
- * Token Log Entity
- */
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,37 +16,24 @@ public class TokenLog {
     private String logMessage;
     private LocalDateTime loggedAt;
 
+    @PrePersist
+    public void onCreate() {
+        loggedAt = LocalDateTime.now();
+    }
+
     public TokenLog() {}
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
+    public TokenLog(Token token, String logMessage) {
         this.token = token;
-    }
-
-    public String getLogMessage() {
-        return logMessage;
-    }
-    
-    public void setLogMessage(String logMessage) {
         this.logMessage = logMessage;
     }
 
-    public LocalDateTime getLoggedAt() {
-        return loggedAt;
-    }
-    
-    public void setLoggedAt(LocalDateTime loggedAt) {
-        this.loggedAt = loggedAt;
-    }
+    public Long getId() { return id; }
+    public Token getToken() { return token; }
+    public String getLogMessage() { return logMessage; }
+    public LocalDateTime getLoggedAt() { return loggedAt; }
+
+    public void setId(Long id) { this.id = id; }
+    public void setToken(Token token) { this.token = token; }
+    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
 }
