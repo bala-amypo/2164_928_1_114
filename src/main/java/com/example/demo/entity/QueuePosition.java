@@ -3,7 +3,7 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "queue_position")
+@Table(name = "queue_positions")
 public class QueuePosition {
 
     @Id
@@ -14,31 +14,15 @@ public class QueuePosition {
     @JoinColumn(name = "token_id")
     private Token token;
 
-    private Integer position;
+    private int position;
 
     public QueuePosition() {}
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
-    }
-
-    public Integer getPosition() {
-        return position;
-    }
-
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Token getToken() { return token; }
+    public void setToken(Token token) { this.token = token; }
+    public int getPosition() { return position; }
+    public void setPosition(int position) { this.position = position; }
 }

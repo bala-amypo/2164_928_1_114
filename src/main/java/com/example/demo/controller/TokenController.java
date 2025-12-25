@@ -1,26 +1,51 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Token;
-import com.example.demo.service.impl.TokenServiceImpl;
+import com.example.demo.entity.ServiceCounter;
+import com.example.demo.repository.TokenRepository;
+import com.example.demo.repository.ServiceCounterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/api/tokens")
 public class TokenController {
 
-    private final TokenServiceImpl tokenService;
+    @Autowired
+    private TokenRepository tokenRepository;
 
-    public TokenController(TokenServiceImpl tokenService) {
-        this.tokenService = tokenService;
+    @Autowired
+    private ServiceCounterRepository serviceCounterRepository;
+
+    @GetMapping
+    public List<Token> getAllTokens() {
+        return tokenRepository.findAll();
     }
 
     @PostMapping("/issue/{counterId}")
-    public Token issue(@PathVariable Long counterId) {
-        return tokenService.issueToken(counterId);
+    public Token issueToken(@PathVariable Long counterId) {
+        ServiceCounter counter = serviceCounterRepository.findById(counterId)
+                .orElseThrow(() -> new RuntimeException("Counter not found"));
+
+        Token token = new Token();
+        token.setServiceCounter(counter);
+        token.setStatus("WAITING");
+        token.setIssuedAt(LocalDateTime.now());
+
+        return tokenRepository.save(token);
     }
 
-    @PutMapping("/{id}/status/{status}")
-    public Token update(@PathVariable Long id, @PathVariable String status) {
-        return tokenService.updateStatus(id, status);
+    @PostMapping("/complete/{tokenId}")
+    public Token completeToken(@PathVariable Long tokenId) {
+        Token token = tokenRepository.findById(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
+
+        token.setStatus("COMPLETED");
+        token.setCompletedAt(LocalDateTime.now());
+
+        return tokenRepository.save(token);
     }
 }
