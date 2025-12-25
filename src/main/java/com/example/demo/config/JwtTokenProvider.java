@@ -1,55 +1,50 @@
 package com.example.demo.config;
 
-import com.example.demo.entity.User;
-import com.example.demo.service.impl.UserServiceImpl;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
+import io.jsonwebtoken.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.io.IOException;
+public class JwtTokenProvider {
 
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final String secretKey;
+    private final long validityInMs;
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserServiceImpl userService;
-
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserServiceImpl userService) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
+    public JwtTokenProvider(String secretKey, long validityInMs) {
+        this.secretKey = secretKey;
+        this.validityInMs = validityInMs;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    public String generateToken(Long userId, String email, String role) {
 
-        String token = getJwtFromRequest(request);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+        claims.put("role", role);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Long userId = Long.parseLong(jwtTokenProvider.getClaims(token).getSubject());
-            User user = userService.findById(userId);
-
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    user, null, null // can add authorities if needed
-            );
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(auth);
-        }
-
-        filterChain.doFilter(request, response);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(String.valueOf(userId))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + validityInMs))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearer = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        return null;
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
