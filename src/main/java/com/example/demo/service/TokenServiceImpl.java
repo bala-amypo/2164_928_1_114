@@ -1,69 +1,78 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
-import com.example.demo.service.TokenService;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Service
-public class TokenServiceImpl implements TokenService {
+public class TokenServiceImpl {
 
-    private final TokenRepository tokenRepository;
-    private final ServiceCounterRepository counterRepository;
-    private final TokenLogRepository logRepository;
-    private final QueuePositionRepository queueRepository;
+    private final TokenRepository tokenRepo;
+    private final ServiceCounterRepository counterRepo;
+    private final TokenLogRepository logRepo;
+    private final QueuePositionRepository queueRepo;
 
-    public TokenServiceImpl(TokenRepository tokenRepository,
-                            ServiceCounterRepository counterRepository,
-                            TokenLogRepository logRepository,
-                            QueuePositionRepository queueRepository) {
-        this.tokenRepository = tokenRepository;
-        this.counterRepository = counterRepository;
-        this.logRepository = logRepository;
-        this.queueRepository = queueRepository;
+    public TokenServiceImpl(TokenRepository t, ServiceCounterRepository c,
+                            TokenLogRepository l, QueuePositionRepository q) {
+        tokenRepo = t;
+        counterRepo = c;
+        logRepo = l;
+        queueRepo = q;
     }
 
-    @Override
     public Token issueToken(Long counterId) {
-        ServiceCounter counter = counterRepository.findById(counterId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+        ServiceCounter sc = counterRepo.findById(counterId)
+                .orElseThrow(() -> new RuntimeException("Counter not found"));
 
-        if (!counter.getActive()) {
-            throw new RuntimeException("not active");
+        if (!sc.getIsActive()) {
+            throw new IllegalArgumentException("Counter not active");
         }
 
-        Token token = new Token("T-" + System.currentTimeMillis(), counter, "WAITING");
-        tokenRepository.save(token);
+        Token token = new Token();
+        token.setServiceCounter(sc);
+        token.setStatus("WAITING");
+        token.setTokenNumber(sc.getCounterName() + "-" + System.currentTimeMillis());
+        token = tokenRepo.save(token);
 
-        queueRepository.save(new QueuePosition(token, 1));
-        logRepository.save(new TokenLog(token, "Token issued"));
+        List<Token> waiting = tokenRepo
+                .findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
+
+        QueuePosition qp = new QueuePosition();
+        qp.setToken(token);
+        qp.setPosition(waiting.size());
+        queueRepo.save(qp);
+
+        TokenLog log = new TokenLog();
+        log.setToken(token);
+        log.setMessage("ISSUED");
+        logRepo.save(log);
 
         return token;
     }
 
-    @Override
     public Token updateStatus(Long tokenId, String status) {
-        Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+        Token token = tokenRepo.findById(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        if (!status.equals("SERVING") && !status.equals("COMPLETED")) {
-            throw new RuntimeException("Invalid status");
+        if ("WAITING".equals(token.getStatus()) && "COMPLETED".equals(status)) {
+            throw new IllegalArgumentException("Invalid status");
         }
 
         token.setStatus(status);
-        if ("COMPLETED".equals(status)) {
-            token.setCompletedAt(LocalDateTime.now());
-        }
+        token.setCompletedAt(LocalDateTime.now());
+        tokenRepo.save(token);
 
-        logRepository.save(new TokenLog(token, "Status changed"));
-        return tokenRepository.save(token);
+        TokenLog log = new TokenLog();
+        log.setToken(token);
+        log.setMessage(status);
+        logRepo.save(log);
+
+        return token;
     }
 
-    @Override
-    public Token getToken(Long tokenId) {
-        return tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+    public Token getToken(Long id) {
+        return tokenRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
     }
 }
