@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "token_log")
 public class TokenLog {
 
     @Id
@@ -11,17 +12,40 @@ public class TokenLog {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "token_id")
     private Token token;
 
-    private String logMessage;
+    private String message;
+
     private LocalDateTime loggedAt = LocalDateTime.now();
 
-    public Long getId() { return id; }
-    public Token getToken() { return token; }
-    public String getMessage() { return logMessage; }
-    public LocalDateTime getLoggedAt() { return loggedAt; }
+    public TokenLog() {}
 
-    public void setId(Long id) { this.id = id; }
-    public void setToken(Token token) { this.token = token; }
-    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
+    }
 }
