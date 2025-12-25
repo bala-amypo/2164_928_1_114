@@ -10,16 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/token")
 public class TokenController {
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    @PostMapping("/generate")
+    public AuthResponse generateToken(@RequestBody AuthRequest request) {
+        // token generation logic
+        return new AuthResponse("generated-token");
+    }
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    private PasswordEncoder passwordEncode
+} // <- closing brace
