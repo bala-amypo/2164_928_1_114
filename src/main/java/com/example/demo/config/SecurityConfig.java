@@ -1,4 +1,7 @@
 package com.example.demo.config;
 
-public class SecurityConfig {}
-     
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SecurityConfig {
+}

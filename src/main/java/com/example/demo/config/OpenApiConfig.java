@@ -1,3 +1,7 @@
 package com.example.demo.config;
 
-public class OpenApiConfig {}
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+}
