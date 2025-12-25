@@ -1,27 +1,17 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.QueuePosition;
-import com.example.demo.service.QueuePositionService;
+import com.example.demo.service.impl.QueueServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/queue")
-public class QueuePositionController {
+@RequestMapping("/api/queue")
+public class QueueController {
 
-    private final QueuePositionService service;
+    @Autowired
+    private QueueServiceImpl queueService;
 
-    public QueuePositionController(QueuePositionService service) {
-        this.service = service;
-    }
-
-    @PutMapping("/position/{tokenId}/{newPosition}")
-    public QueuePosition update(@PathVariable Long tokenId,
-                                @PathVariable Integer newPosition) {
-        return service.updateQueuePosition(tokenId, newPosition);
-    }
-
-    @GetMapping("/position/{tokenId}")
-    public QueuePosition get(@PathVariable Long tokenId) {
-        return service.getPosition(tokenId);
-    }
-}
+    // Update the position of a token in the queue
+    @PutMapping("/update/{tokenId}")
+    public QueuePosition updateQueuePosition(

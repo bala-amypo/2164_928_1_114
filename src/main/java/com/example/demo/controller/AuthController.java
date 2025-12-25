@@ -1,16 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.impl.UserServiceImpl;
+import com.example.demo.config.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -18,42 +14,29 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private UserServiceImpl userService;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password)
-            );
-
-            User user = userRepository.findByEmail(email).orElseThrow(() ->
-                    new RuntimeException("User not found")
-            );
-
-            String token = jwtTokenProvider.createToken(email, user.getRole());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("email", email);
-            response.put("token", token);
-            response.put("role", user.getRole());
-
-            return ResponseEntity.ok(response);
-
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("Invalid email/password");
-        }
+    // --------------------------
+    // Register new user
+    // --------------------------
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        User created = userService.register(user);
+        return ResponseEntity.ok(Map.of(
+                "id", created.getId(),
+                "email", created.getEmail()
+        ));
     }
-}
+
+    // --------------------------
+    // Login user and get JWT
+    // --------------------------
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+
+        User user = userService.authen
