@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/queue")
-public class QueueController {
+@RequestMapping("/queue")
+public class QueuePositionController {
 
-    @Autowired
-    private QueueServiceImpl queueService;
+    @GetMapping("/position")
+    public String getPosition() {
+        return "position";
+    }
 
-    // Update the position of a token in the queue
-    @PutMapping("/update/{tokenId}")
-    public QueuePosition updateQueuePosition(
+} // <- closing brace
