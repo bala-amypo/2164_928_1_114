@@ -10,30 +10,20 @@ public class TokenLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String message;
+    private LocalDateTime loggedAt = LocalDateTime.now();
+
     @ManyToOne
     private Token token;
 
-    private String logMessage;
-    private LocalDateTime loggedAt;
-
-    @PrePersist
-    public void onCreate() {
-        loggedAt = LocalDateTime.now();
-    }
-
-    public TokenLog() {}
-
-    public TokenLog(Token token, String logMessage) {
-        this.token = token;
-        this.logMessage = logMessage;
-    }
-
     public Long getId() { return id; }
-    public Token getToken() { return token; }
-    public String getLogMessage() { return logMessage; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
     public LocalDateTime getLoggedAt() { return loggedAt; }
 
-    public void setId(Long id) { this.id = id; }
+    public Token getToken() { return token; }
     public void setToken(Token token) { this.token = token; }
-    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
 }

@@ -10,36 +10,28 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String tokenNumber;
+    private String status;
+    private LocalDateTime issuedAt = LocalDateTime.now();
+    private LocalDateTime completedAt;
 
     @ManyToOne
     private ServiceCounter serviceCounter;
 
-    private String status;
-    private LocalDateTime issuedAt;
-    private LocalDateTime completedAt;
-
-    public Token() {}
-
-    public Token(String tokenNumber, ServiceCounter serviceCounter, String status) {
-        this.tokenNumber = tokenNumber;
-        this.serviceCounter = serviceCounter;
-        this.status = status;
-        this.issuedAt = LocalDateTime.now();
-    }
-
     public Long getId() { return id; }
-    public String getTokenNumber() { return tokenNumber; }
-    public ServiceCounter getServiceCounter() { return serviceCounter; }
-    public String getStatus() { return status; }
-    public LocalDateTime getIssuedAt() { return issuedAt; }
-    public LocalDateTime getCompletedAt() { return completedAt; }
-
     public void setId(Long id) { this.id = id; }
+
+    public String getTokenNumber() { return tokenNumber; }
     public void setTokenNumber(String tokenNumber) { this.tokenNumber = tokenNumber; }
-    public void setServiceCounter(ServiceCounter serviceCounter) { this.serviceCounter = serviceCounter; }
+
+    public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
+
+    public LocalDateTime getIssuedAt() { return issuedAt; }
+
+    public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+
+    public ServiceCounter getServiceCounter() { return serviceCounter; }
+    public void setServiceCounter(ServiceCounter serviceCounter) { this.serviceCounter = serviceCounter; }
 }
