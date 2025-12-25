@@ -1,23 +1,25 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Token;
-import com.example.demo.entity.TokenLog;
-import com.example.demo.service.impl.TokenServiceImpl;
-import com.example.demo.service.impl.TokenLogServiceImpl;
+import com.example.demo.config.JwtTokenProvider;
+import com.example.demo.entity.User;
+import com.example.demo.payload.AuthRequest;
+import com.example.demo.payload.AuthResponse;
+import com.example.demo.service.impl.UserServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/tokens")
+@RequestMapping("/api/auth")
 public class TokenController {
 
     @Autowired
-    private TokenServiceImpl tokenService;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private TokenLogServiceImpl tokenLogService;
+    private UserServiceImpl userService;
 
-    // Issue a new token for a specific counter
-    @PostMapping("/issue/{counterId
+    @Autowired
+    private PasswordEncoder passwordEncode
