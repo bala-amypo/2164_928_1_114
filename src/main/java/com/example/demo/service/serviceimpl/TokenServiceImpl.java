@@ -1,10 +1,7 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.serviceimpl;
 
 import com.example.demo.entity.Token;
 import com.example.demo.entity.TokenStatus;
-import com.example.demo.repository.QueuePositionRepository;
-import com.example.demo.repository.ServiceCounterRepository;
-import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,55 +11,29 @@ import java.time.LocalDateTime;
 public class TokenServiceImpl {
 
     private final TokenRepository tokenRepository;
-    private final ServiceCounterRepository counterRepository;
-    private final TokenLogRepository logRepository;
-    private final QueuePositionRepository queueRepository;
 
-    public TokenServiceImpl(TokenRepository tokenRepository,
-                            ServiceCounterRepository counterRepository,
-                            TokenLogRepository logRepository,
-                            QueuePositionRepository queueRepository) {
+    public TokenServiceImpl(TokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
-        this.counterRepository = counterRepository;
-        this.logRepository = logRepository;
-        this.queueRepository = queueRepository;
     }
 
-    /**
-     * t15_updateTokenStatusToServing
-     * t22_tokenServiceUsesRepos
-     */
-    public Token updateTokenStatusToServing(Token token) {
-        token.setStatus(TokenStatus.SERVING);
-        return tokenRepository.save(token);
-    }
+    // Called by TokenController.updateStatus(id, status)
+    public Token updateStatus(Long tokenId, String status) {
+        Token token = tokenRepository.findById(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
 
-    /**
-     * t16_updateTokenToCompletedSetsTimestamp
-     */
-    public Token updateTokenToCompleted(Token token) {
-        token.setStatus(TokenStatus.COMPLETED);
-        token.setCompletedAt(LocalDateTime.now());
-        return tokenRepository.save(token);
-    }
+        TokenStatus tokenStatus = TokenStatus.valueOf(status.toUpperCase());
+        token.setStatus(tokenStatus);
 
-    /**
-     * t69_evaluateTokenCancellation
-     */
-    public Token cancelToken(Token token) {
-        if (token.getStatus() == TokenStatus.COMPLETED) {
-            throw new IllegalStateException("Cannot cancel completed token");
+        if (tokenStatus == TokenStatus.COMPLETED) {
+            token.setCompletedAt(LocalDateTime.now());
         }
-        token.setStatus(TokenStatus.CANCELLED);
+
         return tokenRepository.save(token);
     }
 
-    /**
-     * t66_issueManyTokensSequence
-     * Ensures no shared state / stateless behavior
-     */
-    public Token issueToken(Token token) {
-        token.setStatus(TokenStatus.WAITING);
-        return tokenRepository.save(token);
+    // Called by TokenController.getToken(id)
+    public Token getToken(Long tokenId) {
+        return tokenRepository.findById(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
     }
 }
