@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.QueuePosition;
 import com.example.demo.service.QueueService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/queue")
+@RequestMapping("/queue")
 public class QueueController {
 
     private final QueueService queueService;
@@ -14,36 +14,16 @@ public class QueueController {
         this.queueService = queueService;
     }
 
-    // Add message to queue
-    @PostMapping("/enqueue")
-    public ResponseEntity<String> enqueue(@RequestParam String message) {
-        queueService.enqueue(message);
-        return ResponseEntity.ok("Message added to queue");
+    @PutMapping("/{tokenId}")
+    public QueuePosition updatePosition(
+            @PathVariable Long tokenId,
+            @RequestParam Integer position) {
+
+        return queueService.updateQueuePosition(tokenId, position);
     }
 
-    // Remove message from queue
-    @GetMapping("/dequeue")
-    public ResponseEntity<String> dequeue() {
-        String message = queueService.dequeue();
-        if (message == null) {
-            return ResponseEntity.ok("Queue is empty");
-        }
-        return ResponseEntity.ok(message);
-    }
-
-    // Peek queue
-    @GetMapping("/peek")
-    public ResponseEntity<String> peek() {
-        String message = queueService.peek();
-        if (message == null) {
-            return ResponseEntity.ok("Queue is empty");
-        }
-        return ResponseEntity.ok(message);
-    }
-
-    // Queue size
-    @GetMapping("/size")
-    public ResponseEntity<Integer> size() {
-        return ResponseEntity.ok(queueService.size());
+    @GetMapping("/{tokenId}")
+    public QueuePosition getPosition(@PathVariable Long tokenId) {
+        return queueService.getPosition(tokenId);
     }
 }

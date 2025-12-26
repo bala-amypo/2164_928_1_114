@@ -1,30 +1,23 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.JwtTokenProvider;
-import com.example.demo.dto.AuthResponse;
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
+    private final JwtTokenProvider jwtProvider;
 
-    public AuthController(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
-    @PostMapping("/login")
-    public AuthResponse login(@RequestParam String username) {
-
-        // ✅ Correct method call (ONLY STRING)
-        String token = jwtTokenProvider.generateToken(username);
-
-        return new AuthResponse(
-                token,
-                1L,
-                username,
-                "USER"
+    public AuthController(UserService userService) {
+        this.userService = userService;
+        this.jwtProvider = new JwtTokenProvider(
+                "mySecretKey123456789",
+                3600000
         );
-    }
-}
