@@ -22,7 +22,7 @@ public class ServiceCounterServiceImpl {
     public List<ServiceCounter> getActiveCounters() {
         return repository.findAll()
                 .stream()
-                .filter(ServiceCounter::getActive)
+                .filter(c -> Boolean.TRUE.equals(c.getActive()))
                 .toList();
     }
 }
