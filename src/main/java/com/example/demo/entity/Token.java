@@ -15,5 +15,23 @@ public class Token {
 
     private LocalDateTime completedAt;
 
-    // getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public TokenStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TokenStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
 }
