@@ -21,3 +21,26 @@ public class AuthController {
                 "mySecretKey123456789",
                 3600000
         );
+    }
+
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return userService.register(user);
+    }
+
+    @PostMapping("/login")
+    public Map<String, String> login(@RequestBody User user) {
+
+        User dbUser = userService.findByEmail(user.getEmail());
+
+        String token = jwtProvider.generateToken(
+                dbUser.getId(),
+                dbUser.getEmail(),
+                dbUser.getRole()
+        );
+
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return response;
+    }
+}
