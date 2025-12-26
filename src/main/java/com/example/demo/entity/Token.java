@@ -4,36 +4,50 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "tokens")
 public class Token {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String tokenNumber;
-
-    @ManyToOne
-    private ServiceCounter serviceCounter;
-
+    // WAITING, SERVING, COMPLETED, CANCELLED
+    @Column(nullable = false)
     private String status;
-    private LocalDateTime issuedAt = LocalDateTime.now();
+
     private LocalDateTime completedAt;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Column(nullable = false)
+    private int queuePosition;
 
-    public String getTokenNumber() { return tokenNumber; }
-    public void setTokenNumber(String tokenNumber) { this.tokenNumber = tokenNumber; }
+    public Token() {}
 
-    public ServiceCounter getServiceCounter() { return serviceCounter; }
-    public void setServiceCounter(ServiceCounter serviceCounter) { this.serviceCounter = serviceCounter; }
+    // getters and setters
+    public Long getId() {
+        return id;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getStatus() {
+        return status;
+    }
 
-    public LocalDateTime getIssuedAt() { return issuedAt; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public LocalDateTime getCompletedAt() { return completedAt; }
-    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public int getQueuePosition() {
+        return queuePosition;
+    }
+
+    public void setQueuePosition(int queuePosition) {
+        this.queuePosition = queuePosition;
+    }
 }
