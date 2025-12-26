@@ -2,9 +2,9 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.ServiceCounter;
 import com.example.demo.repository.ServiceCounterRepository;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+@Service
 public class ServiceCounterServiceImpl {
 
     private final ServiceCounterRepository repo;
@@ -13,11 +13,7 @@ public class ServiceCounterServiceImpl {
         this.repo = repo;
     }
 
-    public ServiceCounter addCounter(ServiceCounter c) {
-        return repo.save(c);
-    }
-
-    public List<ServiceCounter> getActiveCounters() {
-        return repo.findByIsActiveTrue();
+    public ServiceCounter save(ServiceCounter counter) {
+        return repo.save(counter);                              // t21
     }
 }

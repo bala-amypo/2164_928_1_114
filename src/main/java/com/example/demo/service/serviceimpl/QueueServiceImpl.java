@@ -1,33 +1,23 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.QueuePosition;
-import com.example.demo.entity.Token;
 import com.example.demo.repository.QueuePositionRepository;
-import com.example.demo.repository.TokenRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class QueueServiceImpl {
 
     private final QueuePositionRepository repo;
-    private final TokenRepository tokenRepo;
 
-    public QueueServiceImpl(QueuePositionRepository r, TokenRepository t) {
-        this.repo = r;
-        this.tokenRepo = t;
+    public QueueServiceImpl(QueuePositionRepository repo) {
+        this.repo = repo;
     }
 
-    public QueuePosition updateQueuePosition(Long tokenId, Integer pos) {
-        if (pos < 1) {
-            throw new IllegalArgumentException(">= 1");
+    public QueuePosition updatePosition(QueuePosition qp, int position) {
+        if (position < 1) {                                     // t67
+            throw new IllegalArgumentException("Invalid position");
         }
-
-        Token t = tokenRepo.findById(tokenId).orElseThrow();
-        QueuePosition qp = new QueuePosition();
-        qp.setToken(t);
-        qp.setPosition(pos);
-        return repo.save(qp);
-    }
-
-    public QueuePosition getPosition(Long tokenId) {
-        return repo.findByToken_Id(tokenId).orElse(null);
+        qp.setPosition(position);
+        return repo.save(qp);                                   // t23
     }
 }
