@@ -16,4 +16,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-mvn spring-boot:run -e
