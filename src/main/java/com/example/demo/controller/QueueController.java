@@ -1,27 +1,29 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.QueuePosition;
-import com.example.demo.service.impl.QueueServiceImpl;
+import com.example.demo.service.QueueService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/queue")
 public class QueueController {
 
-    private final QueueServiceImpl service;
+    private final QueueService queueService;
 
-    public QueueController(QueueServiceImpl service) {
-        this.service = service;
+    public QueueController(QueueService queueService) {
+        this.queueService = queueService;
     }
 
-    @PutMapping("/{id}")
-    public QueuePosition update(@PathVariable Long id,
-                                @RequestParam Integer position) {
-        return service.updateQueuePosition(id, position);
+    @PutMapping("/position/{tokenId}/{newPosition}")
+    public QueuePosition updateQueuePosition(
+            @PathVariable Long tokenId,
+            @PathVariable Integer newPosition
+    ) {
+        return queueService.updateQueuePosition(tokenId, newPosition);
     }
 
-    @GetMapping("/{id}")
-    public QueuePosition get(@PathVariable Long id) {
-        return service.updateQueuePosition(id, 0); // or fetch entity
+    @GetMapping("/position/{tokenId}")
+    public QueuePosition getQueuePosition(@PathVariable Long tokenId) {
+        return queueService.getPosition(tokenId);
     }
 }

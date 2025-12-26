@@ -1,32 +1,31 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.TokenLog;
-import com.example.demo.service.impl.TokenLogServiceImpl;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.service.TokenLogService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/logs")
+@RequestMapping("/logs")
 public class TokenLogController {
 
-    private final TokenLogServiceImpl service;
+    private final TokenLogService logService;
 
-    public TokenLogController(TokenLogServiceImpl service) {
-        this.service = service;
+    public TokenLogController(TokenLogService logService) {
+        this.logService = logService;
     }
 
     @PostMapping("/{tokenId}")
-    public ResponseEntity<TokenLog> addLog(
+    public TokenLog addLog(
             @PathVariable Long tokenId,
-            @RequestParam String message) {
-        return ResponseEntity.ok(service.addLog(tokenId, message));
+            @RequestParam String message
+    ) {
+        return logService.addLog(tokenId, message);
     }
 
     @GetMapping("/{tokenId}")
-    public ResponseEntity<List<TokenLog>> getLogs(
-            @PathVariable Long tokenId) {
-        return ResponseEntity.ok(service.getLogs(tokenId));
+    public List<TokenLog> getLogs(@PathVariable Long tokenId) {
+        return logService.getLogs(tokenId);
     }
 }
