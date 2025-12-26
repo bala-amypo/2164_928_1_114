@@ -3,69 +3,60 @@ package com.example.demo.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    // MUST be at least 32 characters for HS256
-    private static final String SECRET_KEY =
-            "my-super-secure-secret-key-123456";
+    private String secretKey;
+    private int expirationInMs;
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
+    // ✅ REQUIRED by tests
+    public JwtTokenProvider(String secretKey, int expirationInMs) {
+        this.secretKey = secretKey;
+        this.expirationInMs = expirationInMs;
+    }
 
-    private final SecretKey key;
-
-    // ✅ NO-ARGS constructor (required by Spring + tests)
+    // ✅ REQUIRED default constructor (Spring + tests safety)
     public JwtTokenProvider() {
-        this.key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        this.secretKey = "defaultSecretKey";
+        this.expirationInMs = 3600000;
     }
 
-    // ✅ Used by tests: generateToken(username)
-    public String generateToken(String username) {
-        return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
+    // ✅ REQUIRED by tests
+    public String generateToken(long userId, String username, String role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationInMs);
 
-    // ✅ Used by tests: generateToken(id, username, role)
-    public String generateToken(Long id, String username, String role) {
         return Jwts.builder()
-                .subject(username)
-                .claim("id", id)
+                .setSubject(username)
+                .claim("userId", userId)
                 .claim("role", role)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
-    // ✅ Used by tests
+    // ✅ REQUIRED by tests
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token);
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    // ✅ Used by tests
+    // ✅ REQUIRED by tests
     public Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
