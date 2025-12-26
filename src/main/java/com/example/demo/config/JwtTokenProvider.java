@@ -3,18 +3,20 @@ package com.example.demo.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JwtTokenProvider {
 
-    private final String secret;
+    private final SecretKey secretKey;
     private final long validityInMs;
 
     public JwtTokenProvider(String secret, long validityInMs) {
-        this.secret = secret;
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.validityInMs = validityInMs;
     }
 
@@ -29,28 +31,27 @@ public class JwtTokenProvider {
         Date expiry = new Date(now.getTime() + validityInMs);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     public Claims getClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(secretKey)   // ✅ NOW CORRECT
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            getClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
