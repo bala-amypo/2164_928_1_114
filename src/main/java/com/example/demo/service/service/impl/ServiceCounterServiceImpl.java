@@ -1,19 +1,22 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.ServiceCounter;
-import com.example.demo.repository.ServiceCounterRepository;
-import org.springframework.stereotype.Service;
-
 @Service
-public class ServiceCounterServiceImpl {
+public class QueueServiceImpl {
 
-    private final ServiceCounterRepository repo;
+    private final QueuePositionRepository repo;
 
-    public ServiceCounterServiceImpl(ServiceCounterRepository repo) {
+    public QueueServiceImpl(QueuePositionRepository repo) {
         this.repo = repo;
     }
 
-    public ServiceCounter save(ServiceCounter counter) {
-        return repo.save(counter);                              // t21
+    public QueuePosition updateQueuePosition(Long id, Integer position) {
+        QueuePosition qp = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found"));
+        qp.setPosition(position);
+        return repo.save(qp);
+    }
+
+    public Integer getPosition(Long id) {
+        return repo.findById(id)
+                .map(QueuePosition::getPosition)
+                .orElse(0);
     }
 }

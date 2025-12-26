@@ -1,9 +1,3 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.QueuePosition;
-import com.example.demo.repository.QueuePositionRepository;
-import org.springframework.stereotype.Service;
-
 @Service
 public class QueueServiceImpl {
 
@@ -13,11 +7,16 @@ public class QueueServiceImpl {
         this.repo = repo;
     }
 
-    public QueuePosition updatePosition(QueuePosition qp, int position) {
-        if (position < 1) {                                     // t67
-            throw new IllegalArgumentException("Invalid position");
-        }
+    public QueuePosition updateQueuePosition(Long id, Integer position) {
+        QueuePosition qp = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found"));
         qp.setPosition(position);
-        return repo.save(qp);                                   // t23
+        return repo.save(qp);
+    }
+
+    public Integer getPosition(Long id) {
+        return repo.findById(id)
+                .map(QueuePosition::getPosition)
+                .orElse(0);
     }
 }
