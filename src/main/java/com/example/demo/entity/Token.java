@@ -1,37 +1,21 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-public class Token {
+public class TokenLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private TokenStatus status;
+    private String message;
 
-    private LocalDateTime completedAt;
-
-    public Long getId() {
-        return id;
+    public String getMessage() {
+        return message;
     }
 
-    public TokenStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TokenStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(LocalDateTime completedAt) {
-        this.completedAt = completedAt;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
