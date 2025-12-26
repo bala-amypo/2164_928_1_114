@@ -6,8 +6,10 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.TokenLogService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class TokenLogServiceImpl implements TokenLogService {
 
@@ -24,6 +26,7 @@ public class TokenLogServiceImpl implements TokenLogService {
 
     @Override
     public TokenLog addLog(Long tokenId, String message) {
+
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new ResourceNotFoundException("not found"));
 

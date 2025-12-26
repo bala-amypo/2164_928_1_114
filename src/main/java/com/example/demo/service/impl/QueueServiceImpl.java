@@ -6,7 +6,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
-import org.springframework.stereotype.Service;   // ✅ THIS IMPORT WAS MISSING
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 

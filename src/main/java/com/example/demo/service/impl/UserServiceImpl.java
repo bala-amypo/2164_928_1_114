@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service   
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(User user) {
-
         Optional<User> existing = userRepository.findByEmail(user.getEmail());
         if (existing.isPresent()) {
             throw new IllegalArgumentException("Email");
