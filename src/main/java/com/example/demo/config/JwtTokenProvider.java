@@ -1,50 +1,50 @@
 package com.example.demo.config;
 
+import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
+import java.security.Key;
+import java.util.Date;
+
+@Component
 public class JwtTokenProvider {
 
-    private final String secretKey;
-    private final long validityInMs;
+    private static final String SECRET =
+            "MySuperSecretKeyForJwtGenerationMySuperSecretKeyForJwtGeneration";
 
-    public JwtTokenProvider(String secretKey, long validityInMs) {
-        this.secretKey = secretKey;
-        this.validityInMs = validityInMs;
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(
+                java.util.Base64.getEncoder().encodeToString(SECRET.getBytes())
+        ));
     }
 
-    public String generateToken(Long userId, String email, String role) {
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
-        claims.put("role", role);
-
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(String.valueOf(userId))
+                .setSubject(String.valueOf(user.getId()))        // t54
+                .claim("role", user.getRole())                   // t49
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + validityInMs))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token);
+            getClaims(token);                                   // t55
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
-    }
-
-    public Claims getClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
     }
 }
