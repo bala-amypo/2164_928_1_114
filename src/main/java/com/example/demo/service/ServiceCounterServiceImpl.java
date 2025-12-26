@@ -1,22 +1,28 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.ServiceCounter;
+import com.example.demo.repository.ServiceCounterRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @Service
-public class QueueServiceImpl {
+public class ServiceCounterServiceImpl {
 
-    private final QueuePositionRepository repo;
+    private final ServiceCounterRepository repository;
 
-    public QueueServiceImpl(QueuePositionRepository repo) {
-        this.repo = repo;
+    public ServiceCounterServiceImpl(ServiceCounterRepository repository) {
+        this.repository = repository;
     }
 
-    public QueuePosition updateQueuePosition(Long id, Integer position) {
-        QueuePosition qp = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-        qp.setPosition(position);
-        return repo.save(qp);
+    public ServiceCounter addCounter(ServiceCounter counter) {
+        return repository.save(counter);
     }
 
-    public Integer getPosition(Long id) {
-        return repo.findById(id)
-                .map(QueuePosition::getPosition)
-                .orElse(0);
+    public List<ServiceCounter> getActiveCounters() {
+        return repository.findAll()
+                .stream()
+                .filter(ServiceCounter::getActive)
+                .toList();
     }
 }
