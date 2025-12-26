@@ -3,7 +3,7 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "service_counter")
+@Table(name = "service_counters")
 public class ServiceCounter {
 
     @Id
@@ -11,37 +11,22 @@ public class ServiceCounter {
     private Long id;
 
     private String counterName;
+
     private String department;
 
-    @Column(nullable = false)
-    private Boolean active = true;
+    private Boolean isActive = true;
 
-    // 🔴 THIS METHOD FIXES YOUR ERROR
-    public Boolean getActive() {
-        return active;
-    }
+    public ServiceCounter() {}
 
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getCounterName() { return counterName; }
+    public void setCounterName(String counterName) { this.counterName = counterName; }
 
-    public String getCounterName() {
-        return counterName;
-    }
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
 
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setCounterName(String counterName) {
-        this.counterName = counterName;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean active) { isActive = active; }
 }
