@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Token;
+import com.example.demo.entity.TokenStatus;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.QueuePositionRepository;
