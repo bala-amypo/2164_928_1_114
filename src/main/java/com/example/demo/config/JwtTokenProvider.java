@@ -38,8 +38,9 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
+            Jwts.parserBuilder()
                     .setSigningKey(secret)
+                    .build()
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
@@ -48,8 +49,9 @@ public class JwtTokenProvider {
     }
 
     public Claims getClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(secret)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
