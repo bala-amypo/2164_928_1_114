@@ -1,7 +1,8 @@
 package com.example.demo.config;
 
 import com.example.demo.entity.User;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +13,9 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final String SECRET =
-            "MySuperSecretKeyMySuperSecretKeyMySuperSecretKey";
+            "MySecretKeyMySecretKeyMySecretKeyMySecretKey";
 
-    private Key getKey() {
+    private Key key() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
@@ -24,7 +25,7 @@ public class JwtTokenProvider {
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
     }
 }
