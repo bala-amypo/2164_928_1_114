@@ -3,7 +3,6 @@ package com.example.demo.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,58 +11,44 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final SecretKey secretKey;
-    private final long validityInMs;
+    private static final String SECRET_KEY =
+            "mysecretkeymysecretkeymysecretkey123456"; // min 32 chars
 
-    public JwtTokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration}") long validityInMs) {
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-        this.validityInMs = validityInMs;
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    /* ================= CREATE TOKEN ================= */
-
+    /* ✅ SINGLE PARAMETER METHOD (FIXES YOUR ERROR) */
     public String generateToken(String username) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + validityInMs);
-
         return Jwts.builder()
                 .subject(username)
-                .issuedAt(now)
-                .expiration(expiry)
-                .signWith(secretKey)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(getSigningKey())
                 .compact();
     }
 
-    /* ================= READ CLAIMS ================= */
-
-    public Claims getClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
+    public String getUsernameFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
 
-    /* ================= VALIDATION ================= */
+        return claims.getSubject();
+    }
 
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token);
+                .verifyWith(getSigningKey())
+                .build()
+                .parse(token);
             return true;
         } catch (Exception e) {
             return false;
         }
-    }
-
-    /* ================= USERNAME ================= */
-
-    public String getUsername(String token) {
-        return getClaims(token).getSubject();
     }
 }
