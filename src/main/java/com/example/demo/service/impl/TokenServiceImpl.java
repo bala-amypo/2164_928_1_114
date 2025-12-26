@@ -1,12 +1,14 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.*;
 import com.example.demo.service.TokenService;
+import org.springframework.stereotype.Service;   // ✅ THIS IMPORT WAS MISSING
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+
 @Service
 public class TokenServiceImpl implements TokenService {
 
@@ -31,7 +33,7 @@ public class TokenServiceImpl implements TokenService {
     public Token issueToken(Long counterId) {
 
         ServiceCounter counter = counterRepository.findById(counterId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("not found"));
 
         if (!counter.getIsActive()) {
             throw new IllegalArgumentException("not active");
@@ -41,64 +43,60 @@ public class TokenServiceImpl implements TokenService {
         token.setServiceCounter(counter);
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
-        token.setTokenNumber(UUID.randomUUID().toString());
 
-        token = tokenRepository.save(token);
-
-        List<Token> waiting =
-                tokenRepository.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(
-                        counterId, "WAITING"
-                );
+        Token saved = tokenRepository.save(token);
 
         QueuePosition qp = new QueuePosition();
-        qp.setToken(token);
-        qp.setPosition(waiting.size());
-        qp.setUpdatedAt(LocalDateTime.now());
+        qp.setToken(saved);
+        qp.setPosition(
+                tokenRepository
+                        .findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING")
+                        .size()
+        );
         queueRepository.save(qp);
 
         TokenLog log = new TokenLog();
-        log.setToken(token);
+        log.setToken(saved);
         log.setLogMessage("Token issued");
         logRepository.save(log);
 
-        return token;
+        return saved;
     }
 
     @Override
     public Token updateStatus(Long tokenId, String status) {
 
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("not found"));
 
         String current = token.getStatus();
 
-        boolean valid =
-                (current.equals("WAITING") && (status.equals("SERVING") || status.equals("CANCELLED")))
-                || (current.equals("SERVING") && (status.equals("COMPLETED") || status.equals("CANCELLED")));
+        if (current.equals("WAITING") && status.equals("SERVING") ||
+            current.equals("SERVING") && (status.equals("COMPLETED") || status.equals("CANCELLED")) ||
+            current.equals("WAITING") && status.equals("CANCELLED")) {
 
-        if (!valid) {
-            throw new IllegalArgumentException("Invalid status");
+            token.setStatus(status);
+
+            if (status.equals("COMPLETED") || status.equals("CANCELLED")) {
+                token.setCompletedAt(LocalDateTime.now());
+            }
+
+            Token saved = tokenRepository.save(token);
+
+            TokenLog log = new TokenLog();
+            log.setToken(saved);
+            log.setLogMessage("Status updated");
+            logRepository.save(log);
+
+            return saved;
         }
 
-        token.setStatus(status);
-
-        if (status.equals("COMPLETED") || status.equals("CANCELLED")) {
-            token.setCompletedAt(LocalDateTime.now());
-        }
-
-        token = tokenRepository.save(token);
-
-        TokenLog log = new TokenLog();
-        log.setToken(token);
-        log.setLogMessage("Status updated to " + status);
-        logRepository.save(log);
-
-        return token;
+        throw new IllegalArgumentException("Invalid status");
     }
 
     @Override
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("not found"));
     }
 }
