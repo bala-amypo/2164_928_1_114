@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "service_counters")
 public class ServiceCounter {
 
     @Id
@@ -16,17 +15,35 @@ public class ServiceCounter {
 
     private Boolean isActive = true;
 
-    public ServiceCounter() {}
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getCounterName() { return counterName; }
-    public void setCounterName(String counterName) { this.counterName = counterName; }
+    public String getCounterName() {
+        return counterName;
+    }
 
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
+    public void setCounterName(String counterName) {
+        this.counterName = counterName;
+    }
 
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean active) { isActive = active; }
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
 }
