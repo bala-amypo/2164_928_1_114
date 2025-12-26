@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.UUID;
 @Service
 public class TokenServiceImpl implements TokenService {
-    ...
-}
-@Service
-public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository counterRepository;
