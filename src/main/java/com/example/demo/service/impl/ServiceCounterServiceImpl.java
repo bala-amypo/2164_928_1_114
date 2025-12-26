@@ -10,19 +10,19 @@ import java.util.List;
 @Service
 public class ServiceCounterServiceImpl implements ServiceCounterService {
 
-    private final ServiceCounterRepository counterRepository;
+    private final ServiceCounterRepository repository;
 
-    public ServiceCounterServiceImpl(ServiceCounterRepository counterRepository) {
-        this.counterRepository = counterRepository;
+    public ServiceCounterServiceImpl(ServiceCounterRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
-        return counterRepository.save(counter);
+        return repository.save(counter);
     }
 
     @Override
     public List<ServiceCounter> getActiveCounters() {
-        return counterRepository.findByIsActiveTrue();
+        return repository.findByIsActiveTrue();
     }
 }
