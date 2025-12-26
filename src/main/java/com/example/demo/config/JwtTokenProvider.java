@@ -1,73 +1,71 @@
 package com.example.demo.config;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    private String secretKey = "my-secret-key-my-secret-key-my-secret-key";
-    private long validityInMs = 3600000; // 1 hour
+    // MUST be at least 32 characters for HS256
+    private static final String SECRET_KEY =
+            "my-super-secure-secret-key-123456";
 
-    private Key key;
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
-    // ✅ REQUIRED by tests
+    private final SecretKey key;
+
+    // ✅ NO-ARGS constructor (required by Spring + tests)
     public JwtTokenProvider() {
-        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        this.key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    // ✅ REQUIRED by tests
-    public JwtTokenProvider(String secretKey, int validityInMs) {
-        this.secretKey = secretKey;
-        this.validityInMs = validityInMs;
-        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
-    }
-
-    // ✅ REQUIRED by tests
-    public String generateToken(long userId, String username, String role) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("userId", userId);
-        claims.put("role", role);
-
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + validityInMs);
-
+    // ✅ Used by tests: generateToken(username)
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // (Optional backward compatibility)
-    public String generateToken(String username) {
-        return generateToken(0L, username, "USER");
+    // ✅ Used by tests: generateToken(id, username, role)
+    public String generateToken(Long id, String username, String role) {
+        return Jwts.builder()
+                .subject(username)
+                .claim("id", id)
+                .claim("role", role)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    // ✅ REQUIRED by tests
+    // ✅ Used by tests
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
+            Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    // ✅ REQUIRED by tests
+    // ✅ Used by tests
     public Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+        return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
