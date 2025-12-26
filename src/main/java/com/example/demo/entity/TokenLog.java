@@ -14,43 +14,16 @@ public class TokenLog {
     private Token token;
 
     private String logMessage;
+    private LocalDateTime loggedAt = LocalDateTime.now();
 
-    private LocalDateTime loggedAt;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    @PrePersist
-    public void onCreate() {
-        this.loggedAt = LocalDateTime.now();
-    }
+    public Token getToken() { return token; }
+    public void setToken(Token token) { this.token = token; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getLogMessage() { return logMessage; }
+    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
-    }
-
-    public String getLogMessage() {
-        return logMessage;
-    }
-
-    public void setLogMessage(String logMessage) {
-        this.logMessage = logMessage;
-    }
-
-    public LocalDateTime getLoggedAt() {
-        return loggedAt;
-    }
-
-    public void setLoggedAt(LocalDateTime loggedAt) {
-        this.loggedAt = loggedAt;
-    }
+    public LocalDateTime getLoggedAt() { return loggedAt; }
 }
