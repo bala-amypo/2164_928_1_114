@@ -7,7 +7,7 @@ import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
 
 import java.time.LocalDateTime;
-
+@Service
 public class QueueServiceImpl implements QueueService {
 
     private final QueuePositionRepository queueRepository;
