@@ -2,11 +2,11 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Token;
 import com.example.demo.entity.TokenLog;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.TokenLogService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class TokenLogServiceImpl implements TokenLogService {
@@ -24,14 +24,12 @@ public class TokenLogServiceImpl implements TokenLogService {
 
     @Override
     public TokenLog addLog(Long tokenId, String message) {
-
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("not found"));
 
         TokenLog log = new TokenLog();
         log.setToken(token);
         log.setLogMessage(message);
-        log.setLoggedAt(LocalDateTime.now());
 
         return logRepository.save(log);
     }
