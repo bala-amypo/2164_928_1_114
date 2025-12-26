@@ -1,5 +1,14 @@
+package com.example.demo.controller;
+
+import com.example.demo.config.JwtTokenProvider;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -11,11 +20,16 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 
-        // (skip real authentication for now)
+        // Normally you validate username & password here
         String token = jwtTokenProvider.generateToken(request.getUsername());
 
-        return ResponseEntity.ok(
-                new AuthResponse(token)
+        AuthResponse response = new AuthResponse(
+                token,
+                null,
+                request.getUsername(),
+                "ROLE_USER"
         );
+
+        return ResponseEntity.ok(response);
     }
 }
