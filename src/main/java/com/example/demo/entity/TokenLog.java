@@ -17,10 +17,10 @@ public class TokenLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Token token;
-
-    private String action;
+    private String logMessage;
 
     private LocalDateTime loggedAt;
+
+    @ManyToOne
+    private Token token;
 }
