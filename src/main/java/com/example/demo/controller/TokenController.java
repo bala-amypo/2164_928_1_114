@@ -5,7 +5,7 @@ import com.example.demo.service.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tokens")
+@RequestMapping("/token")
 public class TokenController {
 
     private final TokenService tokenService;
@@ -14,21 +14,8 @@ public class TokenController {
         this.tokenService = tokenService;
     }
 
-    @PostMapping("/issue/{counterId}")
-    public Token issueToken(@PathVariable Long counterId) {
-        return tokenService.issueToken(counterId);
-    }
-
-    @PutMapping("/status/{tokenId}")
-    public Token updateStatus(
-            @PathVariable Long tokenId,
-            @RequestParam String status
-    ) {
-        return tokenService.updateStatus(tokenId, status);
-    }
-
-    @GetMapping("/{tokenId}")
-    public Token getToken(@PathVariable Long tokenId) {
-        return tokenService.getToken(tokenId);
+    @PostMapping("/{userId}")
+    public Token create(@PathVariable Long userId) {
+        return tokenService.createToken(userId);
     }
 }

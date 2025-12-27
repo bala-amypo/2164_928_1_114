@@ -1,28 +1,40 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "tokens")
 public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String tokenNumber;
+    private Long userId;
 
     private String status;
 
-    private LocalDateTime issuedAt;
+    public Long getId() {
+        return id;
+    }
 
-    @ManyToOne
-    private ServiceCounter serviceCounter;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
