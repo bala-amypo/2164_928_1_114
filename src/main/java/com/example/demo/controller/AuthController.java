@@ -18,3 +18,4 @@ public class AuthController {
         return jwtTokenProvider.generateToken(1L, username, "USER");
     }
 }
+  
