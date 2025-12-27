@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // 🔴 REQUIRED to create Spring bean
+@Service
 public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     private final ServiceCounterRepository counterRepository;
@@ -18,6 +18,7 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
+        counter.setActive(true);
         return counterRepository.save(counter);
     }
 
