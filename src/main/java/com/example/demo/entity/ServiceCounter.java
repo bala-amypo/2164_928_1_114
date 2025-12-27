@@ -1,9 +1,5 @@
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-
 @Entity
+@Table(name = "service_counter")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +11,10 @@ public class ServiceCounter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
     @Column(nullable = false)
-    private Boolean isActive = true;
+    private String counterName;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean active = true;
 }
