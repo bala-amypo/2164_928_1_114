@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TokenLogRepository extends JpaRepository<TokenLog, Long> {
 
-    List<TokenLog> findByToken_Id(Long tokenId);
+    List<TokenLog> findByTokenIdOrderByLoggedAtAsc(Long tokenId);
 }
