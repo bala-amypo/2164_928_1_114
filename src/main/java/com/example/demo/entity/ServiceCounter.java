@@ -1,14 +1,12 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ServiceCounter {
 
     @Id
@@ -17,6 +15,5 @@ public class ServiceCounter {
 
     private String name;
 
-    @Builder.Default
     private boolean isActive = true;
 }
