@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.ServiceCounter;
 import com.example.demo.entity.Token;
 import com.example.demo.entity.TokenLog;
 import com.example.demo.repository.ServiceCounterRepository;
@@ -10,18 +11,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-@Service   // 🔴 REQUIRED
+@Service
 public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository counterRepository;
     private final TokenLogRepository logRepository;
 
-    public TokenServiceImpl(
-            TokenRepository tokenRepository,
-            ServiceCounterRepository counterRepository,
-            TokenLogRepository logRepository) {
-
+    public TokenServiceImpl(TokenRepository tokenRepository,
+                            ServiceCounterRepository counterRepository,
+                            TokenLogRepository logRepository) {
         this.tokenRepository = tokenRepository;
         this.counterRepository = counterRepository;
         this.logRepository = logRepository;
@@ -29,31 +28,39 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token issueToken(Long counterId) {
-        counterRepository.findById(counterId)
-                .orElseThrow(() -> new RuntimeException("Counter not found"));
+
+        ServiceCounter counter = counterRepository.findById(counterId)
+                .orElseThrow(() -> new RuntimeException("Service counter not found"));
 
         Token token = new Token();
-        token.setCounterId(counterId);
+        token.setServiceCounter(counter);
         token.setStatus("ISSUED");
         token.setIssuedAt(LocalDateTime.now());
 
-        Token saved = tokenRepository.save(token);
+        Token savedToken = tokenRepository.save(token);
 
         TokenLog log = new TokenLog();
-        log.setTokenId(saved.getId());
-        log.setMessage("Token issued");
-        log.setTimestamp(LocalDateTime.now());
+        log.setToken(savedToken);
+        log.setLogMessage("Token issued");
+        log.setLoggedAt(LocalDateTime.now());
+
         logRepository.save(log);
 
-        return saved;
+        return savedToken;
     }
 
     @Override
     public Token updateStatus(Long tokenId, String status) {
+
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
         token.setStatus(status);
+
+        if ("COMPLETED".equalsIgnoreCase(status)) {
+            token.setCompletedAt(LocalDateTime.now());
+        }
+
         return tokenRepository.save(token);
     }
 

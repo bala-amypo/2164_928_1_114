@@ -5,8 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TokenLogRepository
-        extends JpaRepository<TokenLog, Long> {
+public interface TokenLogRepository extends JpaRepository<TokenLog, Long> {
 
-    List<TokenLog> findByTokenId(Long tokenId);
+    List<TokenLog> findByToken_Id(Long tokenId);
 }
