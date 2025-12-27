@@ -17,12 +17,12 @@ public class ServiceCounterController {
     }
 
     @PostMapping
-    public ServiceCounter add(@RequestBody ServiceCounter counter) {
+    public ServiceCounter addCounter(@RequestBody ServiceCounter counter) {
         return counterService.addCounter(counter);
     }
 
     @GetMapping("/active")
-    public List<ServiceCounter> activeCounters() {
+    public List<ServiceCounter> getActiveCounters() {
         return counterService.getActiveCounters();
     }
 }
