@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface TokenLogService {
 
-    void log(Long tokenId, String message);
+    void addLog(Long tokenId, String message);
 
     List<TokenLog> getLogs(Long tokenId);
 }

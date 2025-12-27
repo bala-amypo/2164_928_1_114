@@ -15,10 +15,17 @@ public class TokenLog {
     private LocalDateTime loggedAt;
 
     @ManyToOne
+    @JoinColumn(name = "token_id")
     private Token token;
+
+    // ---------- Getters & Setters ----------
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLogMessage() {
