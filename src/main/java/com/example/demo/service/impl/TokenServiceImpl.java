@@ -60,4 +60,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
-                .orEl
+                .orElseThrow(() -> new RuntimeException("Token not found"));
+    }
+}
