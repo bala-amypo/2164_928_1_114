@@ -10,15 +10,14 @@ public class TokenLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String logMessage;
+    private String message;
 
     private LocalDateTime loggedAt;
 
     @ManyToOne
-    @JoinColumn(name = "token_id")
     private Token token;
 
-    // ---------- Getters & Setters ----------
+    // ===== getters & setters =====
 
     public Long getId() {
         return id;
@@ -28,12 +27,12 @@ public class TokenLog {
         this.id = id;
     }
 
-    public String getLogMessage() {
-        return logMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setLogMessage(String logMessage) {
-        this.logMessage = logMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public LocalDateTime getLoggedAt() {
