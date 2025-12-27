@@ -1,11 +1,33 @@
-package com.example.demo.repository;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.TokenLog;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.demo.repository.TokenLogRepository;
+import com.example.demo.service.TokenLogService;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TokenLogRepository extends JpaRepository<TokenLog, Long> {
+@Service
+public class TokenLogServiceImpl implements TokenLogService {
 
-    List<TokenLog> findByToken_IdOrderByLoggedAtAsc(Long tokenId);
+    private final TokenLogRepository logRepository;
+
+    public TokenLogServiceImpl(TokenLogRepository logRepository) {
+        this.logRepository = logRepository;
+    }
+
+    @Override
+    public void log(Long tokenId, String message) {
+        TokenLog log = new TokenLog();
+        log.setLogMessage(message);
+        log.setLoggedAt(LocalDateTime.now());
+        // set token separately if needed
+        logRepository.save(log);
+    }
+
+    @Override
+    public List<TokenLog> getLogs(Long tokenId) {
+        return logRepository.findByToken_IdOrderByLoggedAtAsc(tokenId);
+    }
 }
