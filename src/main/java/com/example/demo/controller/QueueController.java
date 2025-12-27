@@ -4,6 +4,8 @@ import com.example.demo.entity.QueuePosition;
 import com.example.demo.service.QueueService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/queue")
 public class QueueController {
@@ -14,16 +16,18 @@ public class QueueController {
         this.queueService = queueService;
     }
 
-    @PutMapping("/{tokenId}")
-    public QueuePosition updatePosition(
-            @PathVariable Long tokenId,
-            @RequestParam Integer position) {
-
-        return queueService.updateQueuePosition(tokenId, position);
+    @PostMapping("/{tokenId}")
+    public QueuePosition add(@PathVariable Long tokenId) {
+        return queueService.addToQueue(tokenId);
     }
 
     @GetMapping("/{tokenId}")
-    public QueuePosition getPosition(@PathVariable Long tokenId) {
-        return queueService.getPosition(tokenId);
+    public QueuePosition get(@PathVariable Long tokenId) {
+        return queueService.getQueuePosition(tokenId);
+    }
+
+    @GetMapping
+    public List<QueuePosition> all() {
+        return queueService.getAll();
     }
 }
