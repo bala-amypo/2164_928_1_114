@@ -7,3 +7,4 @@ public interface ServiceCounterService {
     ServiceCounter addCounter(ServiceCounter counter);
     List<ServiceCounter> getActiveCounters();
 }
+
